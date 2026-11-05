@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Markdown 系统学习模块：CommonMark 基础语法、GFM 扩展、表格、任务列表、脚注、工具链与写作规范。">
+<title>Markdown · LEARN.SYS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#7c3aed;--accent-dark:#6d28d9;--accent-soft:#f5f3ff;
+  --ink:#0f172a;--text:#334155;--muted:#64748b;--line:#e2e8f0;
+  --bg:#f8fafc;--code:#0f172a;--code-line:#1e293b;
+}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--text);line-height:1.9;background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.topbar{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:10px;
+  align-items:center;justify-content:space-between;padding:10px 24px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar .brand{font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:.95rem;
+  letter-spacing:.1em;color:var(--ink)}
+.topbar .brand span{color:var(--accent)}
+.topbar nav{display:flex;flex-wrap:wrap;gap:4px}
+.topbar nav a{font-family:ui-monospace,Consolas,monospace;font-size:.75rem;letter-spacing:.04em;
+  padding:4px 10px;border-radius:999px;color:var(--muted)}
+.topbar nav a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none}
+.topbar nav a.cur{background:var(--accent);color:#fff}
+.topbar .author{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;color:var(--accent);
+  border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:#fff}
+
+.wrap{display:flex;align-items:flex-start;max-width:1240px;margin:0 auto}
+aside{width:248px;flex-shrink:0;padding:26px 14px 40px;position:sticky;top:57px;
+  height:calc(100vh - 57px);overflow-y:auto;border-right:1px solid var(--line);background:#fff}
+aside h2{font-size:.72rem;letter-spacing:.16em;color:var(--muted);margin:0 0 14px 10px;
+  font-family:ui-monospace,Consolas,monospace;text-transform:uppercase}
+aside a{display:block;color:#475569;font-size:.84rem;padding:5px 10px;border-radius:6px;
+  margin-bottom:1px;transition:.18s;border-left:2px solid transparent}
+aside a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none}
+aside a.sub{padding-left:24px;font-size:.78rem;color:#7b8ca1}
+aside .back{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);
+  font-family:ui-monospace,Consolas,monospace;font-size:.76rem;color:var(--muted)}
+
+main{flex:1;min-width:0;max-width:920px;padding:42px 52px 90px;counter-reset:sec}
+.lang-head{margin-bottom:40px;padding-bottom:26px;border-bottom:2px solid var(--line)}
+.lang-head .glyph{font-family:ui-monospace,Consolas,monospace;font-size:2.7rem;font-weight:700;
+  color:var(--accent);line-height:1;letter-spacing:.02em}
+.lang-head h1{font-size:1.85rem;margin:12px 0 8px;color:var(--ink);letter-spacing:.01em}
+.lang-head .lead{color:#52657c;font-size:.95rem;max-width:680px}
+.tag{display:inline-block;font-family:ui-monospace,Consolas,monospace;font-size:.68rem;
+  padding:2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);
+  margin:12px 6px 0 0;border:1px solid rgba(124,58,237,.12)}
+.meta-row{display:flex;flex-wrap:wrap;gap:20px;margin-top:18px;font-size:.75rem;
+  color:var(--muted);font-family:ui-monospace,Consolas,monospace}
+.meta-row b{color:var(--ink);font-weight:600}
+
+section{margin:0 0 54px;scroll-margin-top:78px}
+section>h2{font-size:1.28rem;color:var(--ink);margin:0 0 16px;display:flex;align-items:baseline;gap:10px;
+  padding-bottom:10px;border-bottom:1px solid var(--line)}
+section>h2::before{counter-increment:sec;content:counter(sec,decimal-leading-zero);
+  font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:var(--accent);
+  background:var(--accent-soft);padding:2px 8px;border-radius:6px;flex-shrink:0}
+h3{font-size:1.02rem;color:#1e293b;margin:28px 0 8px}
+h4{font-size:.9rem;color:#334155;margin:18px 0 6px}
+p{font-size:.93rem;margin:10px 0;color:#3f5062}
+strong{color:var(--ink)}
+ul,ol{margin:10px 0 14px 24px;font-size:.92rem}
+li{margin:5px 0}
+li>ul,li>ol{margin-top:3px;margin-bottom:3px}
+hr{border:none;border-top:1px dashed var(--line);margin:24px 0}
+
+.code{background:var(--code);border:1px solid var(--code-line);border-radius:10px;
+  margin:14px 0;overflow:hidden;box-shadow:0 8px 20px -14px rgba(15,23,42,.5)}
+.code .bar{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 14px;background:#111c30;border-bottom:1px solid rgba(255,255,255,.06);
+  font-family:ui-monospace,Consolas,monospace;font-size:.68rem;letter-spacing:.06em;color:#7f93ab}
+.code .bar .lang{color:#c4b5fd}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;color:#e2e8f0;
+  font-family:"JetBrains Mono",Consolas,"Courier New",monospace;font-size:.82rem;line-height:1.75}
+.code code{font-family:inherit;font-size:inherit}
+pre code{white-space:pre}
+p code,li code,td code,th code,.callout code{background:#e8eef7;color:#1e3a5f;
+  padding:1px 6px;border-radius:4px;font-family:ui-monospace,Consolas,monospace;
+  font-size:.86em;border:1px solid #dbe5f1}
+.out{background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 14px;
+  margin:10px 0;font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:#475569;white-space:pre-wrap}
+.out::before{content:"▸ 渲染效果";display:block;font-size:.66rem;letter-spacing:.12em;
+  color:#94a3b8;margin-bottom:4px}
+
+.callout{border:1px solid;border-left-width:3px;border-radius:0 8px 8px 0;
+  padding:12px 16px;margin:16px 0;font-size:.88rem;line-height:1.8}
+.callout .t{display:block;font-weight:700;font-size:.78rem;letter-spacing:.05em;margin-bottom:4px}
+.tip{background:#f0f9ff;border-color:#0ea5e9;color:#0c4a6e}
+.tip .t{color:#0369a1}
+.warn{background:#fffbeb;border-color:#f59e0b;color:#78350f}
+.warn .t{color:#b45309}
+.danger{background:#fef2f2;border-color:#ef4444;color:#7f1d1d}
+.danger .t{color:#b91c1c}
+.ok{background:#f0fdf4;border-color:#22c55e;color:#14532d}
+.ok .t{color:#15803d}
+
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.84rem;background:#fff;
+  border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f1f5f9;color:#334155;font-weight:600;white-space:nowrap;font-size:.8rem}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:#f8fafc}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px;margin:16px 0}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:#fff}
+.card h4{margin:0 0 5px;color:var(--ink);font-size:.88rem}
+.card p{margin:0;font-size:.82rem;color:var(--muted)}
+
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:56px;
+  padding-top:22px;border-top:1px solid var(--line);font-size:.82rem}
+.pager a{font-family:ui-monospace,Consolas,monospace;padding:6px 14px;border:1px solid var(--line);
+  border-radius:999px;background:#fff}
+footer{margin-top:26px;font-family:ui-monospace,Consolas,monospace;font-size:.72rem;
+  color:#94a3b8;letter-spacing:.08em}
+
+@media(max-width:880px){
+  .topbar{max-width:100vw}
+  .topbar nav{min-width:0}
+  .wrap{flex-direction:column;width:100%;max-width:100%}
+  aside{width:100%;max-width:100%;min-width:0;height:auto;position:static;border-right:none;
+    border-bottom:1px solid var(--line);padding:14px 16px;white-space:nowrap;overflow-x:auto}
+  aside h2{margin-bottom:8px}
+  aside a{display:inline-block;border-left:none;padding:4px 9px}
+  aside .back{display:inline-block;margin:0 0 0 6px;padding:4px 9px;border-top:none}
+  main{width:100%;max-width:100%;padding:30px 22px 70px}
+}
+@media(max-width:520px){
+  .topbar{padding:8px 14px}
+  .topbar .author{display:none}
+  section>h2{font-size:1.12rem}
+  .lang-head .glyph{font-size:2.2rem}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="index.html">◈ LEARN<span>.SYS</span></a>
+  <nav>
+    <a href="py.html">PYTHON</a>
+    <a href="cpp.html">C++</a>
+    <a href="java.html">JAVA</a>
+    <a href="html.html">HTML</a>
+    <a class="cur" href="md.html">MARKDOWN</a>
+  </nav>
+  <span class="author">@呱瓜多米</span>
+</header>
+
+<div class="wrap">
+<aside>
+  <h2>Markdown 目录</h2>
+  <a href="#intro">认识 Markdown</a>
+  <a href="#basic">段落与标题</a>
+  <a href="#emphasis">强调与转义</a>
+  <a href="#list">列表</a>
+  <a href="#link">链接与图片</a>
+  <a href="#code">代码</a>
+  <a href="#quote">引用与分割线</a>
+  <a href="#table">表格</a>
+  <a href="#gfm">GFM 扩展</a>
+  <a href="#html">Markdown 中的 HTML</a>
+  <a href="#extend">扩展语法</a>
+  <a href="#tool">工具链</a>
+  <a href="#pitfalls">易错点与写作规范</a>
+  <a href="#cheat">速查表</a>
+  <a class="back" href="index.html">← 返回首页</a>
+</aside>
+
+<main>
+  <div class="lang-head">
+    <div class="glyph">Md</div>
+    <h1>Markdown 系统学习</h1>
+    <p class="lead">Markdown 是一种轻量级标记语言，用纯文本表达标题、列表、链接、代码和表格，再渲染成 HTML。它是 README、技术文档、笔记、博客和协作平台的事实标准。Markdown 的语法很小，但不同平台的实现存在差异：理解 CommonMark 核心与 GFM 扩展的边界，能避免大量“我这里能显示、你那里不行”的问题。</p>
+    <div>
+      <span class="tag">纯文本</span><span class="tag">CommonMark</span><span class="tag">GFM</span>
+      <span class="tag">可移植</span><span class="tag">文档工程</span>
+    </div>
+    <div class="meta-row">
+      <span>难度：<b>入门 → 熟练</b></span>
+      <span>规范：<b>CommonMark + GFM</b></span>
+      <span>阅读时长：<b>约 40 分钟</b></span>
+    </div>
+  </div>
+
+  <section id="intro">
+    <h2>认识 Markdown</h2>
+    <p>Markdown 由 John Gruber 与 Aaron Swartz 于 2004 年创建，目标是“让文档源码像纯文本一样易读，同时能转换成结构化的 HTML”。它不描述字体、颜色或布局，只描述<strong>结构</strong>：这是标题、这是列表、这是代码。</p>
+
+    <div class="grid2">
+      <div class="card"><h4>可读的源码</h4><p>即使不渲染，纯文本本身也有清晰结构，适合版本控制与 diff。</p></div>
+      <div class="card"><h4>平台无关</h4><p>任何编辑器都能打开；可转换为 HTML、PDF、Word、幻灯片。</p></div>
+      <div class="card"><h4>语法极简</h4><p>核心语法十几分钟就能学会，其余靠约定与扩展。</p></div>
+      <div class="card"><h4>实现有差异</h4><p>CommonMark 是核心规范；表格、任务列表等属于扩展。</p></div>
+    </div>
+
+    <h3>CommonMark 与 GFM</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>规范</th><th>覆盖范围</th><th>典型使用场景</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CommonMark</strong></td><td>标题、段落、强调、列表、链接、图片、代码、引用、分割线等核心语法</td><td>追求跨平台一致的文档</td></tr>
+          <tr><td><strong>GFM</strong>（GitHub Flavored Markdown）</td><td>CommonMark + 表格、任务列表、删除线、自动链接、脚注等</td><td>GitHub、GitLab、许多笔记软件</td></tr>
+          <tr><td>其他扩展</td><td>数学公式、Mermaid 图表、Front Matter、定义列表、警告块</td><td>静态站点、Obsidian、Typora、文档平台</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout warn"><span class="t">不要假设所有平台都支持扩展</span>
+      表格、任务列表、删除线、脚注、数学公式并非 CommonMark 核心。发布到不同平台前，先用目标平台的预览确认；重要文档优先使用核心语法。</div>
+
+    <h3>渲染流程</h3>
+    <p>Markdown 源文件通常经过：<strong>解析 → 生成 AST → 转换为 HTML</strong>。不同解析器（markdown-it、CommonMark.js、Python-Markdown、pulldown-cmark）对边缘语法处理不同，所以“严格 CommonMark”与“某个平台方言”可能表现不一致。</p>
+  </section>
+
+  <section id="basic">
+    <h2>段落与标题</h2>
+    <p>段落由一个或多个连续文本行组成，段落之间必须用<strong>空行</strong>分隔。普通换行会被合并为空格；如果确实需要换行，可在行末加两个空格，或使用反斜杠，或插入 HTML 的 <code>&lt;br&gt;</code>。</p>
+
+    <div class="code">
+      <div class="bar"><span>basic.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code>这是第一段。
+它和上一行属于同一段。
+
+这是第二段。
+
+这是同一段，
+但行末有两个空格··
+所以这里强制换行。
+
+也可以用反斜杠\
+强制换行。
+
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+
+一级标题另一种写法（Setext，仅限一、二级）
+========================================
+
+二级标题
+--------</code></pre>
+    </div>
+    <div class="out">
+      <strong>一级标题</strong>（h1）<br>
+      <strong>二级标题</strong>（h2）<br>
+      其余为 h3–h6。ATX 标题的 <code>#</code> 与文字之间<strong>必须有一个空格</strong>。
+    </div>
+    <div class="callout tip"><span class="t">标题的唯一性与层级</span>
+      一个文档通常只有一个一级标题；标题层级要连续，不要从 h2 直接跳到 h4。很多静态站点会根据标题自动生成目录（TOC），层级混乱会直接影响导航。</div>
+  </section>
+
+  <section id="emphasis">
+    <h2>强调与转义</h2>
+    <div class="code">
+      <div class="bar"><span>emphasis.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code>*斜体* 或 _斜体_
+**加粗** 或 __加粗__
+***加粗斜体***
+~~删除线~~（GFM）
+`行内代码`
+**加粗中有 `代码`**
+**嵌套 *斜体* 也可以**
+
+# 转义特殊字符：反斜杠
+\*不是斜体\*
+\# 不是标题
+\[不是链接\]
+\`不是代码\`
+
+# 行内代码里的特殊字符不需要转义
+`a * b * c` 显示为代码，不会被当作强调</code></pre>
+    </div>
+    <div class="out">
+      <em>斜体</em>　<strong>加粗</strong>　<strong><em>加粗斜体</em></strong>
+      <del>删除线</del>　<code>行内代码</code>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>写法</th><th>效果</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>*文字*</code> / <code>_文字_</code></td><td>斜体</td><td>下划线形式在单词内部可能不生效。</td></tr>
+          <tr><td><code>**文字**</code> / <code>__文字__</code></td><td>加粗</td><td>推荐用星号，兼容性更好。</td></tr>
+          <tr><td><code>***文字***</code></td><td>加粗斜体</td><td>可组合。</td></tr>
+          <tr><td><code>~~文字~~</code></td><td>删除线</td><td>GFM 扩展，CommonMark 核心不支持。</td></tr>
+          <tr><td><code>`文字`</code></td><td>行内代码</td><td>内容按字面显示。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout warn"><span class="t">星号与下划线的边界</span>
+      <code>snake_case_name</code> 中的下划线通常不会被解析为强调，但不同解析器仍有细差。需要字面星号或下划线时，用反斜杠转义或放进行内代码。</div>
+  </section>
+
+  <section id="list">
+    <h2>列表</h2>
+    <p>无序列表使用 <code>-</code>、<code>*</code> 或 <code>+</code>，有序列表使用数字加点。标记与内容之间要有空格。<strong>嵌套列表必须缩进</strong>，通常 2–4 个空格，具体取决于父级标记宽度。</p>
+
+    <div class="code">
+      <div class="bar"><span>lists.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code>- 苹果
+- 香蕉
+  - 进口香蕉
+  - 本地香蕉
+- 橙子
+
+* 也可以用星号
++ 或加号（同一列表内保持一致）
+
+1. 第一步
+2. 第二步
+3. 第三步
+
+# 编号不要求连续，渲染器会自动排序
+1. 第一步
+1. 第二步
+1. 第三步
+
+# 从指定数字开始（部分实现支持）
+5. 第五项
+6. 第六项
+
+# 任务列表（GFM）
+- [x] 已完成
+- [ ] 未完成
+- [ ] 待办事项
+
+# 列表中包含多段内容：空行 + 缩进
+- 第一段
+
+  第二段，需要与列表标记对齐缩进。
+
+- 列表项中的代码块：
+
+  ```python
+  print("hello")
+  ```</code></pre>
+    </div>
+    <div class="out">
+      • 苹果<br>
+      • 香蕉<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;◦ 进口香蕉<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;◦ 本地香蕉<br>
+      • 橙子<br><br>
+      ☑ 已完成　☐ 未完成
+    </div>
+    <div class="callout tip"><span class="t">紧凑列表 vs 松散列表</span>
+      列表项之间没有空行时是“紧凑列表”，渲染为紧凑的 <code>&lt;li&gt;</code>；有空行时是“松散列表”，每项内容会包在 <code>&lt;p&gt;</code> 中，间距更大。需要一致间距时，统一加空行或统一不加。</div>
+  </section>
+
+  <section id="link">
+    <h2>链接与图片</h2>
+    <p>链接语法是 <code>[显示文字](地址 "可选标题")</code>；图片前面多一个感叹号：<code>![替代文字](图片地址)</code>。引用式链接把地址集中放在文档末尾，适合长文档与重复链接。</p>
+
+    <div class="code">
+      <div class="bar"><span>links.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code># 行内式
+[OpenAI](https://openai.com)
+[带标题的链接](https://example.com "悬停时显示")
+
+# 自动链接
+&lt;https://example.com&gt;
+&lt;mailto:hi@example.com&gt;
+
+# GFM 裸链接自动识别
+https://example.com
+
+# 引用式
+[查看文档][docs]
+[另一个链接][docs]
+[docs]: https://example.com/docs "文档标题"
+
+# 隐式引用：链接文字就是标识符
+[OpenAI][]
+[OpenAI]: https://openai.com
+
+# 图片
+![海边日落](photo.jpg "可选标题")
+
+# 图片作为链接
+[![替代文字](logo.png)](https://example.com)
+
+# 页内锚点：标题会生成 slug
+[跳到安装章节](#安装)
+
+# 相对路径
+[上一级](../README.md)
+[同目录文档](./guide.md)</code></pre>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>形式</th><th>写法</th><th>适用</th></tr></thead>
+        <tbody>
+          <tr><td>行内式</td><td><code>[文字](url "标题")</code></td><td>一次性链接</td></tr>
+          <tr><td>引用式</td><td><code>[文字][id]</code> + <code>[id]: url</code></td><td>同一地址多次出现</td></tr>
+          <tr><td>自动链接</td><td><code>&lt;https://...&gt;</code></td><td>直接展示 URL</td></tr>
+          <tr><td>图片</td><td><code>![alt](src)</code></td><td>插图</td></tr>
+          <tr><td>锚点</td><td><code>[文字](#标题slug)</code></td><td>文档内跳转</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout warn"><span class="t">图片替代文字很重要</span>
+      <code>![图片](a.png)</code> 中的文字是给无法加载图片或使用屏幕阅读器的用户看的。描述内容，不要写“图片1”。</div>
+  </section>
+
+  <section id="code">
+    <h2>代码</h2>
+    <p>行内代码用一对反引号包裹。代码块用三个反引号或三个波浪号围栏，开头可标注语言以启用语法高亮。围栏代码块是 GFM 与绝大多数现代解析器都支持的写法；缩进四空格的老式代码块在列表中容易出错。</p>
+
+    <div class="code">
+      <div class="bar"><span>code.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code>行内代码：`const x = 1;`
+
+```python
+def hello(name: str) -&gt; None:
+    print(f"Hello, {name}")
+```
+
+```js
+const add = (a, b) =&gt; a + b;
+```
+
+~~~text
+也可以用波浪号作为围栏，
+适合内容本身包含三个反引号的情况。
+~~~
+
+# 行内代码包含反引号：用更多反引号包裹
+``代码里有 ` 反引号``
+
+# 代码块中展示 Markdown 语法：外层用四个反引号
+````markdown
+```python
+print("嵌套代码块")
+```
+````</code></pre>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>写法</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>`code`</code></td><td>行内代码</td></tr>
+          <tr><td>三个反引号 + 语言</td><td>围栏代码块与高亮</td></tr>
+          <tr><td>三个波浪号</td><td>围栏代码块的替代写法</td></tr>
+          <tr><td>缩进 4 空格</td><td>缩进代码块（旧式，仍被支持）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout tip"><span class="t">始终标注语言</span>
+      <code>```python</code> 能让渲染器高亮，也方便工具做代码检查与复制。标注 <code>text</code> 可避免误高亮。</div>
+  </section>
+
+  <section id="quote">
+    <h2>引用与分割线</h2>
+    <div class="code">
+      <div class="bar"><span>quote.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code>&gt; 这是一段引用。
+&gt; 可以跨多行。
+&gt;
+&gt; &gt; 嵌套引用。
+&gt;
+&gt; - 引用中也可以放列表
+&gt; - 第二项
+
+&lt;!-- 分割线：三个及以上 -、* 或 _，单独成行 --&gt;
+---
+
+***
+
+___
+
+# 注意：--- 紧跟在文字下方可能被解析为 Setext 二级标题
+这是标题
+---
+</code></pre>
+    </div>
+    <div class="out">
+      <blockquote style="border-left:3px solid #cbd5e1;padding-left:12px;color:#64748b">这是一段引用。<br>可以跨多行。</blockquote>
+      <hr>
+    </div>
+    <div class="callout warn"><span class="t">分割线的歧义</span>
+      <code>---</code> 如果紧跟在段落文字下面，会被解析为 Setext 二级标题，而不是分割线。想画分割线时，确保它前面有空行。</div>
+  </section>
+
+  <section id="table">
+    <h2>表格</h2>
+    <p>表格是 GFM 扩展语法。第一行是表头，第二行由 <code>-</code> 和可选的冒号组成，定义对齐方式；之后每行是一条数据。单元格之间用 <code>|</code> 分隔，首尾的竖线可以省略。</p>
+
+    <div class="code">
+      <div class="bar"><span>table.md</span><span class="lang">MARKDOWN (GFM)</span></div>
+      <pre><code>| 语言 | 用途 | 难度 |
+| :--- | :---: | ---: |
+| Python | AI / 数据 | 低 |
+| C++ | 系统 / 游戏 | 高 |
+| Java | 后端 / 安卓 | 中 |
+
+# 省略首尾竖线也可以
+语言 | 用途
+--- | ---
+Python | AI
+C++ | 系统
+
+# 单元格内使用竖线需要转义
+| 表达式 | 说明 |
+| --- | --- |
+| `a \| b` | 按位或 |
+| `x || y` | 逻辑或（部分解析器仍需转义） |
+
+# 单元格内换行：使用 &lt;br&gt;
+| 项目 | 说明 |
+| --- | --- |
+| 安装 | 下载安装包&lt;br&gt;运行安装程序 |</code></pre>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>对齐写法</th><th>效果</th></tr></thead>
+        <tbody>
+          <tr><td><code>:---</code></td><td>左对齐（默认）</td></tr>
+          <tr><td><code>:---:</code></td><td>居中</td></tr>
+          <tr><td><code>---:</code></td><td>右对齐</td></tr>
+          <tr><td><code>---</code></td><td>默认左对齐</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout warn"><span class="t">表格不是万能的</span>
+      表格无法合并单元格，也不适合放很长的段落。复杂布局应改用 HTML 表格或拆分内容。表格前后建议留空行，否则部分解析器不会识别。</div>
+  </section>
+
+  <section id="gfm">
+    <h2>GFM 扩展</h2>
+    <p>GitHub Flavored Markdown 在 CommonMark 基础上增加了一批实用语法。它们极大提升了文档表达力，但<strong>不是所有 Markdown 渲染器都支持</strong>。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>语法</th><th>效果</th><th>支持情况</th></tr></thead>
+        <tbody>
+          <tr><td><code>- [ ] 任务</code> / <code>- [x] 完成</code></td><td>任务列表</td><td>GitHub/GitLab/多数笔记软件</td></tr>
+          <tr><td><code>~~文字~~</code></td><td>删除线</td><td>GFM</td></tr>
+          <tr><td><code>| 表格 |</code></td><td>表格</td><td>GFM</td></tr>
+          <tr><td>裸 URL</td><td>自动链接</td><td>GFM</td></tr>
+          <tr><td><code>[^1]</code> + <code>[^1]: 注释</code></td><td>脚注</td><td>GFM / 部分平台</td></tr>
+          <tr><td><code>&gt; [!NOTE]</code></td><td>提示块（Alerts）</td><td>GitHub / 部分平台</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>任务列表与脚注</h3>
+    <div class="code">
+      <div class="bar"><span>gfm.md</span><span class="lang">MARKDOWN (GFM)</span></div>
+      <pre><code>- [x] 学习基础语法
+- [x] 写一个示例
+- [ ] 发布到 GitHub
+
+这是一句需要注释的话[^1]，还有另一条[^note]。
+
+[^1]: 第一条脚注内容。
+[^note]: 脚注可以包含多段文字。
+
+    第二段需要缩进。
+
+# GitHub Alerts（提示块）
+&gt; [!NOTE]
+&gt; 有用的补充信息。
+
+&gt; [!TIP]
+&gt; 更好的做法。
+
+&gt; [!WARNING]
+&gt; 需要注意的风险。
+
+&gt; [!CAUTION]
+&gt; 可能导致严重问题的操作。</code></pre>
+    </div>
+
+    <h3>自动链接</h3>
+    <div class="code">
+      <div class="bar"><span>autolink.md</span><span class="lang">MARKDOWN (GFM)</span></div>
+      <pre><code>访问 https://example.com 即可。
+邮箱 hi@example.com 也会被识别。
+
+# 中文标点紧邻时，部分解析器可能截断链接
+详见 https://example.com/docs，获取更多信息。
+
+# 更稳妥的写法：显式链接
+详见 [文档](https://example.com/docs)，获取更多信息。</code></pre>
+    </div>
+    <div class="callout warn"><span class="t">平台差异</span>
+      GitHub 的 Alerts、脚注、数学公式等在新版中支持较好，但导出到其他系统可能失效。对外发布的重要文档，建议用普通引用块与文字说明作为降级方案。</div>
+  </section>
+
+  <section id="html">
+    <h2>Markdown 中的 HTML</h2>
+    <p>Markdown 允许内嵌原始 HTML，用来补足 Markdown 不支持的布局或语义。但不同平台对 HTML 的过滤策略不同：GitHub 会清洗危险标签与属性，一些文档系统则完全禁用原始 HTML。</p>
+
+    <div class="code">
+      <div class="bar"><span>html-in-md.md</span><span class="lang">MARKDOWN</span></div>
+      <pre><code>普通文字，下面插入一个换行：&lt;br&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;点击展开&lt;/summary&gt;
+  这里是折叠内容。
+&lt;/details&gt;
+
+&lt;div align="center"&gt;
+  &lt;img src="logo.png" alt="Logo" width="120"&gt;
+&lt;/div&gt;
+
+&lt;!-- HTML 注释在渲染后通常不可见 --&gt;
+
+# 注意：块级 HTML 前后通常需要空行
+&lt;div&gt;
+  这是一个块级 HTML 块。
+&lt;/div&gt;</code></pre>
+    </div>
+    <div class="callout danger"><span class="t">安全与可移植性</span>
+      不要嵌入 <code>&lt;script&gt;</code>、<code>onclick</code> 等可执行内容：大多数平台会移除，且可能触发安全策略。依赖 HTML 的文档在导出为纯 Markdown 时可能丢失效果。</div>
+  </section>
+
+  <section id="extend">
+    <h2>扩展语法</h2>
+    <p>不同工具在核心语法之外提供了大量扩展。使用前先确认目标平台是否支持，并在文档中注明依赖。</p>
+
+    <h3>Front Matter（元数据）</h3>
+    <div class="code">
+      <div class="bar"><span>post.md</span><span class="lang">YAML FRONT MATTER</span></div>
+      <pre><code>---
+title: 我的第一篇文章
+date: 2026-11-02
+tags: [markdown, writing]
+draft: false
+---
+
+# 正文标题
+
+正文内容……</code></pre>
+    </div>
+    <p>Front Matter 被静态站点生成器（Hugo、Jekyll、VitePress、Astro）用来读取标题、日期、标签等元数据，本身不会渲染到正文。</p>
+
+    <h3>数学公式</h3>
+    <div class="code">
+      <div class="bar"><span>math.md</span><span class="lang">MARKDOWN + LATEX</span></div>
+      <pre><code>行内公式：$E = mc^2$
+
+块级公式：
+
+$$
+\int_{0}^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+$$</code></pre>
+    </div>
+
+    <h3>Mermaid 图表</h3>
+    <div class="code">
+      <div class="bar"><span>diagram.md</span><span class="lang">MARKDOWN + MERMAID</span></div>
+      <pre><code>```mermaid
+flowchart LR
+    A[开始] --&gt; B{条件}
+    B -- 是 --&gt; C[执行]
+    B -- 否 --&gt; D[结束]
+```</code></pre>
+    </div>
+
+    <h3>其他常见扩展</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>扩展</th><th>语法示例</th><th>常见支持者</th></tr></thead>
+        <tbody>
+          <tr><td>定义列表</td><td>术语后紧跟 <code>: 定义</code></td><td>Python-Markdown、部分平台</td></tr>
+          <tr><td>上标 / 下标</td><td><code>x^2^</code> / <code>H~2~O</code></td><td>Pandoc、部分平台</td></tr>
+          <tr><td>高亮</td><td><code>==文字==</code></td><td>Obsidian、部分平台</td></tr>
+          <tr><td>目录</td><td><code>[TOC]</code> 或 <code>[[_TOC_]]</code></td><td>部分编辑器/平台</td></tr>
+          <tr><td>Wiki 链接</td><td><code>[[页面名]]</code></td><td>Obsidian、Wiki</td></tr>
+          <tr><td>嵌入</td><td><code>![[文件]]</code></td><td>Obsidian</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tool">
+    <h2>工具链</h2>
+    <p>Markdown 本身只是文本格式，真正的能力来自编辑器、转换器与静态站点工具。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>类别</th><th>工具</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td>编辑器</td><td>VS Code、Typora、Obsidian、Zettlr</td><td>实时预览、目录、导出、笔记管理</td></tr>
+          <tr><td>命令行转换</td><td>Pandoc</td><td>Markdown ↔ HTML / PDF / DOCX / PPTX / EPUB</td></tr>
+          <tr><td>静态站点</td><td>VitePress、Docusaurus、Hugo、Astro</td><td>把 Markdown 构建成文档网站</td></tr>
+          <tr><td>Lint</td><td>markdownlint</td><td>检查标题层级、列表缩进、空行等规范</td></tr>
+          <tr><td>格式化</td><td>Prettier、mdformat</td><td>统一换行、表格与空格风格</td></tr>
+          <tr><td>渲染库</td><td>markdown-it、remark、CommonMark.js</td><td>在应用内解析与渲染 Markdown</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code">
+      <div class="bar"><span>命令行示例</span><span class="lang">SHELL</span></div>
+      <pre><code># Pandoc：Markdown 转 HTML
+pandoc README.md -o README.html --standalone
+
+# Markdown 转 PDF（需要 LaTeX 引擎）
+pandoc notes.md -o notes.pdf --pdf-engine=xelatex
+
+# markdownlint 检查
+markdownlint README.md
+
+# 格式化（mdformat）
+mdformat README.md</code></pre>
+    </div>
+    <div class="callout tip"><span class="t">文档即代码</span>
+      把 Markdown 纳入版本控制，配合 lint、格式化、CI 构建，可以像管理代码一样管理文档：可审查、可回滚、可持续集成。</div>
+  </section>
+
+  <section id="pitfalls">
+    <h2>易错点与写作规范</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>问题</th><th>原因 / 解决</th></tr></thead>
+        <tbody>
+          <tr><td><code>#标题</code> 不生效</td><td><code>#</code> 与文字之间必须有空格：<code># 标题</code>。</td></tr>
+          <tr><td>段落被合并</td><td>段落之间需要空行。</td></tr>
+          <tr><td>换行不生效</td><td>行末加两个空格、反斜杠，或使用 <code>&lt;br&gt;</code>。</td></tr>
+          <tr><td>嵌套列表错乱</td><td>子列表缩进 2–4 个空格，并与父项内容对齐。</td></tr>
+          <tr><td><code>---</code> 变成标题</td><td>前面缺少空行，被当作 Setext 标题下划线。</td></tr>
+          <tr><td>表格不渲染</td><td>表头与分隔行之间不能有空行；需要 GFM 支持。</td></tr>
+          <tr><td>表格内竖线破坏结构</td><td>用 <code>\|</code> 转义，或放进行内代码。</td></tr>
+          <tr><td>代码块围栏提前结束</td><td>代码内容含三个反引号时，外层改用四个反引号或波浪号。</td></tr>
+          <tr><td>列表中放代码块失败</td><td>代码围栏要缩进到列表内容层级。</td></tr>
+          <tr><td>链接含空格/括号</td><td>用尖括号包裹 URL，或对空格使用 <code>%20</code>。</td></tr>
+          <tr><td>强调不生效</td><td>标记与文字之间不要有空格：<code>**加粗**</code> 而非 <code>** 加粗 **</code>。</td></tr>
+          <tr><td>HTML 被过滤</td><td>平台安全策略；改用原生 Markdown 语法。</td></tr>
+          <tr><td>中文标点紧邻链接</td><td>自动链接可能把标点吞入；显式链接更稳妥。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>写作规范建议</h3>
+    <ul>
+      <li><strong>一致的标记风格</strong>：无序列表统一用 <code>-</code>，强调统一用 <code>**</code>，不让风格随机变化。</li>
+      <li><strong>一行一句或短行</strong>：便于 diff 与评审；长段落可读性差。</li>
+      <li><strong>标题即目录</strong>：让标题能独立表达信息，不写“其他”“更多”。</li>
+      <li><strong>代码块标注语言</strong>：方便高亮、复制和检查。</li>
+      <li><strong>链接用描述性文字</strong>：避免“点这里”，利于无障碍与检索。</li>
+      <li><strong>图片写 alt</strong>：描述内容而不是文件名。</li>
+      <li><strong>表格只放短内容</strong>：长段落放回正文。</li>
+      <li><strong>先保证核心语法</strong>：跨平台文档谨慎使用扩展。</li>
+      <li><strong>在目标平台预览</strong>：发布前检查渲染差异。</li>
+    </ul>
+    <div class="callout ok"><span class="t">README 的最小结构</span>
+      项目名与一句话简介 → 功能特性 → 安装 → 快速开始 → 使用示例 → 配置 → 常见问题 → 贡献指南 → 许可证。保持简短，把细节链接到独立文档。</div>
+  </section>
+
+  <section id="cheat">
+    <h2>速查表</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>需求</th><th>Markdown 写法</th></tr></thead>
+        <tbody>
+          <tr><td>一级 / 二级标题</td><td><code># 标题</code> / <code>## 标题</code></td></tr>
+          <tr><td>加粗 / 斜体</td><td><code>**加粗**</code> / <code>*斜体*</code></td></tr>
+          <tr><td>删除线</td><td><code>~~文字~~</code>（GFM）</td></tr>
+          <tr><td>行内代码</td><td><code>`code`</code></td></tr>
+          <tr><td>代码块</td><td>三个反引号 + 语言</td></tr>
+          <tr><td>无序 / 有序列表</td><td><code>- 项目</code> / <code>1. 项目</code></td></tr>
+          <tr><td>任务列表</td><td><code>- [ ] 待办</code> / <code>- [x] 完成</code></td></tr>
+          <tr><td>链接</td><td><code>[文字](url)</code></td></tr>
+          <tr><td>图片</td><td><code>![alt](src)</code></td></tr>
+          <tr><td>引用</td><td><code>&gt; 引用文字</code></td></tr>
+          <tr><td>分割线</td><td><code>---</code>（前后留空行）</td></tr>
+          <tr><td>表格</td><td><code>| A | B |</code> + <code>| --- | --- |</code></td></tr>
+          <tr><td>脚注</td><td><code>文字[^1]</code> + <code>[^1]: 注释</code></td></tr>
+          <tr><td>转义</td><td><code>\*</code> <code>\#</code> <code>\[</code></td></tr>
+          <tr><td>强制换行</td><td>行末两个空格或 <code>&lt;br&gt;</code></td></tr>
+          <tr><td>页内跳转</td><td><code>[文字](#标题slug)</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="pager">
+    <a href="html.html">← HTML</a>
+    <a href="index.html">返回首页 →</a>
+  </div>
+  <footer>AUTHOR @呱瓜多米 · MARKDOWN LEARNING MODULE · LEARN.SYS</footer>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="LEARN.SYS 编程语言学习矩阵：Python、C++、Java、HTML、Markdown 系统学习模块。">
+<title>LEARN.SYS · 编程语言学习矩阵</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04060d;--cyan:#00f0ff;--mag:#ff2fd0;--lime:#39ff14;--violet:#8b5cf6;
+  --amber:#ffb020;--text:#cfe6f5;--muted:#6f8ba3;--line:rgba(0,240,255,.22);
+  --panel:rgba(9,17,30,.66);
+}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--text);line-height:1.75;min-height:100vh;overflow-x:hidden;background:var(--bg)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(circle at 15% 8%,rgba(0,240,255,.14),transparent 45%),
+  radial-gradient(circle at 85% 88%,rgba(255,47,208,.13),transparent 45%),
+  radial-gradient(circle at 50% 50%,rgba(139,92,246,.09),transparent 62%),#04060d}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(0,240,255,.05) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(0,240,255,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(circle at 50% 25%,#000 15%,transparent 78%);
+  mask-image:radial-gradient(circle at 50% 25%,#000 15%,transparent 78%);
+  animation:gridpan 24s linear infinite}
+@keyframes gridpan{to{background-position:44px 44px,44px 44px}}
+
+.nav{position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:12px;
+  justify-content:space-between;align-items:center;padding:12px 26px;
+  background:rgba(4,6,13,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{font-family:ui-monospace,Consolas,monospace;font-size:1.05rem;font-weight:700;letter-spacing:.16em;
+  color:var(--cyan);text-decoration:none;text-shadow:0 0 14px rgba(0,240,255,.7)}
+.brand span{color:#fff}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.links a{font-family:ui-monospace,Consolas,monospace;font-size:.82rem;letter-spacing:.08em;text-decoration:none;
+  color:var(--muted);padding:5px 12px;border:1px solid transparent;border-radius:20px;transition:.25s}
+.links a:hover{color:var(--cyan);border-color:var(--line);background:rgba(0,240,255,.07)}
+.author{font-family:ui-monospace,Consolas,monospace;font-size:.8rem;color:var(--mag);
+  border:1px solid rgba(255,47,208,.4);border-radius:20px;padding:4px 12px;
+  box-shadow:inset 0 0 12px rgba(255,47,208,.15)}
+
+.hero{padding:76px 24px 26px;text-align:center;position:relative}
+.kicker{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;letter-spacing:.3em;color:var(--cyan);
+  opacity:.8;margin-bottom:18px}
+.hero h1{font-size:clamp(2.2rem,6vw,4rem);letter-spacing:.05em;line-height:1.15;font-weight:800;
+  background:linear-gradient(100deg,#fff,var(--cyan) 42%,var(--mag));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(0,240,255,.35))}
+.cursor{animation:blink 1.1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero p.sub{margin-top:16px;color:var(--muted);font-size:.96rem;letter-spacing:.08em}
+.tag-row{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tag{font-family:ui-monospace,Consolas,monospace;font-size:.75rem;color:var(--cyan);border:1px solid var(--line);
+  border-radius:999px;padding:3px 14px;background:rgba(0,240,255,.05);
+  box-shadow:inset 0 0 12px rgba(0,240,255,.08)}
+
+.stats{max-width:1000px;margin:38px auto 10px;padding:0 24px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center;
+  background:var(--panel);backdrop-filter:blur(10px)}
+.stat b{display:block;font-family:ui-monospace,Consolas,monospace;font-size:1.7rem;line-height:1.2;
+  color:var(--cyan);text-shadow:0 0 18px rgba(0,240,255,.45)}
+.stat span{font-size:.74rem;letter-spacing:.14em;color:var(--muted);font-family:ui-monospace,Consolas,monospace}
+
+.section-head{max-width:1180px;margin:64px auto 0;padding:0 24px}
+.section-head .idx{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;letter-spacing:.22em;
+  color:var(--mag);opacity:.85}
+.section-head h2{font-size:clamp(1.25rem,3vw,1.7rem);color:#eaf9ff;margin-top:6px;letter-spacing:.03em}
+.section-head p{color:var(--muted);font-size:.88rem;margin-top:6px;max-width:720px}
+
+.grid{max-width:1180px;margin:0 auto;padding:26px 24px 20px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:22px}
+.lang-card{position:relative;display:block;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:18px;padding:26px 24px 42px;
+  background:var(--panel);backdrop-filter:blur(10px);overflow:hidden;
+  transition:.35s cubic-bezier(.2,.7,.3,1);--c:var(--cyan)}
+.lang-card::after{content:"";position:absolute;inset:0;border-radius:18px;
+  background:radial-gradient(circle at 25% 0%,var(--c),transparent 62%);
+  opacity:.13;pointer-events:none;transition:.35s}
+.lang-card:hover{transform:translateY(-7px);border-color:var(--c);
+  box-shadow:0 20px 48px -20px var(--c),inset 0 0 34px -16px var(--c)}
+.lang-card:hover::after{opacity:.3}
+.glyph{font-family:ui-monospace,Consolas,monospace;font-size:2rem;font-weight:700;color:var(--c);
+  text-shadow:0 0 24px var(--c);letter-spacing:.04em;line-height:1.2}
+.lang-card h3{margin:12px 0 6px;font-size:1.12rem;color:#eaf9ff;letter-spacing:.04em}
+.lang-card p{font-size:.87rem;color:var(--muted);min-height:44px}
+.lang-card .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;font-family:ui-monospace,Consolas,monospace;font-size:.7rem}
+.lang-card .meta span{color:var(--c);border:1px solid rgba(255,255,255,.09);
+  border-radius:6px;padding:1px 8px;background:rgba(255,255,255,.03)}
+.lang-card .go{position:absolute;right:20px;bottom:18px;font-family:ui-monospace,Consolas,monospace;font-size:.75rem;
+  color:var(--c);opacity:.55;transition:.3s}
+.lang-card:hover .go{opacity:1;transform:translateX(4px)}
+
+.path{max-width:1180px;margin:0 auto;padding:10px 24px 20px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.step{border:1px solid var(--line);border-radius:16px;padding:22px 20px;
+  background:var(--panel);backdrop-filter:blur(10px);position:relative}
+.step .num{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;letter-spacing:.2em;color:var(--mag)}
+.step h3{margin:8px 0 6px;font-size:1rem;color:#eaf9ff}
+.step p{font-size:.84rem;color:var(--muted)}
+.step::before{content:"";position:absolute;left:20px;top:0;width:34px;height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--mag));box-shadow:0 0 12px rgba(0,240,255,.6)}
+
+.features{max-width:1180px;margin:0 auto;padding:10px 24px 90px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.feature{border:1px solid rgba(0,240,255,.13);border-radius:14px;padding:20px;
+  background:rgba(9,17,30,.5)}
+.feature h3{font-size:.95rem;color:var(--cyan);margin-bottom:6px;font-family:ui-monospace,Consolas,monospace;letter-spacing:.06em}
+.feature p{font-size:.84rem;color:var(--muted)}
+
+footer{text-align:center;padding:34px 20px 52px;color:var(--muted);
+  font-family:ui-monospace,Consolas,monospace;font-size:.78rem;letter-spacing:.1em;
+  border-top:1px solid rgba(0,240,255,.12)}
+footer .sig{color:var(--mag);text-shadow:0 0 12px rgba(255,47,208,.55)}
+
+@media(max-width:560px){
+  .nav{padding:10px 14px}
+  .hero{padding:48px 18px 20px}
+  .section-head{margin-top:48px}
+  .stats{margin-top:28px}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="index.html">◈ LEARN<span>.SYS</span></a>
+  <nav class="links">
+    <a href="py.html">PYTHON</a>
+    <a href="cpp.html">C++</a>
+    <a href="java.html">JAVA</a>
+    <a href="html.html">HTML</a>
+    <a href="md.html">MARKDOWN</a>
+  </nav>
+  <span class="author">@呱瓜多米</span>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="kicker">// SYSTEM ONLINE · KNOWLEDGE MATRIX · BUILD 3.0</div>
+    <h1>LEARN.SYS<span class="cursor">_</span></h1>
+    <p class="sub">五大编程语言学习舱 · 从语法基础到工程实践的一站式知识矩阵</p>
+    <div class="tag-row">
+      <span class="tag">全面 COVERAGE</span>
+      <span class="tag">准确 ACCURATE</span>
+      <span class="tag">详细 EXPLAINED</span>
+      <span class="tag">科幻 SCI-FI</span>
+      <span class="tag">零依赖 ZERO-DEP</span>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="模块统计">
+    <div class="stat"><b>05</b><span>LANGUAGE MODULES</span></div>
+    <div class="stat"><b>70+</b><span>KNOWLEDGE TOPICS</span></div>
+    <div class="stat"><b>200+</b><span>CODE EXAMPLES</span></div>
+    <div class="stat"><b>0</b><span>EXTERNAL DEPENDENCY</span></div>
+  </section>
+
+  <div class="section-head">
+    <div class="idx">// 01 · LANGUAGE MODULES</div>
+    <h2>选择你的学习舱</h2>
+    <p>每个模块都包含系统讲解、可运行示例、对比表格、易错点提示与速查表，适合从零开始，也适合作为日常参考手册。</p>
+  </div>
+
+  <section class="grid" aria-label="语言模块">
+
+    <a class="lang-card" href="py.html" style="--c:#00f0ff">
+      <div class="glyph">Py</div>
+      <h3>Python</h3>
+      <p>简洁优雅的通用语言，AI / 数据科学 / 自动化脚本 / 后端的首选利器。</p>
+      <div class="meta"><span>语法</span><span>类型</span><span>OOP</span><span>生成器</span><span>并发</span></div>
+      <span class="go">ENTER →</span>
+    </a>
+
+    <a class="lang-card" href="cpp.html" style="--c:#ff2fd0">
+      <div class="glyph">C++</div>
+      <h3>C++</h3>
+      <p>高性能系统级语言，游戏引擎、操作系统、量化交易的核心支柱。</p>
+      <div class="meta"><span>指针</span><span>RAII</span><span>STL</span><span>模板</span><span>现代C++</span></div>
+      <span class="go">ENTER →</span>
+    </a>
+
+    <a class="lang-card" href="java.html" style="--c:#ffb020">
+      <div class="glyph">Jv</div>
+      <h3>Java</h3>
+      <p>跨平台企业级语言，JVM 生态庞大，后端与安卓开发的中坚力量。</p>
+      <div class="meta"><span>JVM</span><span>集合</span><span>泛型</span><span>Stream</span><span>并发</span></div>
+      <span class="go">ENTER →</span>
+    </a>
+
+    <a class="lang-card" href="html.html" style="--c:#39ff14">
+      <div class="glyph">&lt;/&gt;</div>
+      <h3>HTML</h3>
+      <p>万维网的骨架语言，用语义化标签构建每一个网页的结构与内容。</p>
+      <div class="meta"><span>结构</span><span>语义化</span><span>表单</span><span>无障碍</span><span>SEO</span></div>
+      <span class="go">ENTER →</span>
+    </a>
+
+    <a class="lang-card" href="md.html" style="--c:#8b5cf6">
+      <div class="glyph">Md</div>
+      <h3>Markdown</h3>
+      <p>轻量级标记语言，写文档、写笔记、写 README 的通用书写格式。</p>
+      <div class="meta"><span>CommonMark</span><span>GFM</span><span>表格</span><span>脚注</span><span>工具链</span></div>
+      <span class="go">ENTER →</span>
+    </a>
+
+  </section>
+
+  <div class="section-head">
+    <div class="idx">// 02 · LEARNING PROTOCOL</div>
+    <h2>推荐学习路径</h2>
+    <p>不要只读不写。每学完一个小节，立刻改动示例、运行、制造错误并修复，这是形成肌肉记忆最快的方式。</p>
+  </div>
+
+  <section class="path" aria-label="学习路径">
+    <div class="step">
+      <div class="num">STEP 01</div>
+      <h3>选择入口</h3>
+      <p>零基础建议从 Python 或 HTML 开始；想理解底层与性能选 C++；面向企业后端选 Java；写文档随时补 Markdown。</p>
+    </div>
+    <div class="step">
+      <div class="num">STEP 02</div>
+      <h3>按目录推进</h3>
+      <p>左侧目录按知识依赖排序。先读概念，再看代码，最后看易错点与对比表；遇到不懂的术语回到前一节。</p>
+    </div>
+    <div class="step">
+      <div class="num">STEP 03</div>
+      <h3>动手验证</h3>
+      <p>复制示例到本地运行，修改参数、故意触发错误、阅读报错信息。能解释“为什么错”才算真正掌握。</p>
+    </div>
+    <div class="step">
+      <div class="num">STEP 04</div>
+      <h3>构建作品</h3>
+      <p>用一个真实小项目串联知识点：命令行工具、爬虫、网页、API 服务。作品比笔记更能证明理解。</p>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <div class="idx">// 03 · SYSTEM PROPERTIES</div>
+    <h2>系统特性</h2>
+    <p>为长时间阅读与反复查阅而设计：结构统一、重点突出、离线可用。</p>
+  </div>
+
+  <section class="features" aria-label="系统特性">
+    <div class="feature">
+      <h3>DETAILED EXPLANATION</h3>
+      <p>不止给代码：每个知识点都解释“是什么、为什么、什么时候用、常见误区”。</p>
+    </div>
+    <div class="feature">
+      <h3>RUNNABLE EXAMPLES</h3>
+      <p>示例尽量可直接运行，并标注输出或预期结果，方便对照验证。</p>
+    </div>
+    <div class="feature">
+      <h3>COMPARISON TABLES</h3>
+      <p>用表格对比相似概念：引用与指针、重载与重写、ArrayList 与 LinkedList。</p>
+    </div>
+    <div class="feature">
+      <h3>PITFALL ALERTS</h3>
+      <p>易错点、未定义行为、平台差异单独提示，减少踩坑成本。</p>
+    </div>
+    <div class="feature">
+      <h3>OFFLINE FIRST</h3>
+      <p>纯 HTML + 内联 CSS，无外部字体、脚本与网络请求，双击即用。</p>
+    </div>
+    <div class="feature">
+      <h3>CONSISTENT UX</h3>
+      <p>五个模块统一导航、配色与排版，切换语言不打断阅读节奏。</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  LEARN.SYS · 编程语言学习矩阵<br>
+  <span class="sig">AUTHOR @呱瓜多米</span> · ALL SYSTEMS NOMINAL
+</footer>
+
+</body>
+</html>
